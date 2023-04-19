@@ -62,10 +62,6 @@ message NVMfRemoteController {
     // object's unique identifier
     common.v1.ObjectKey id = 1;
 
-    NvmeTransportType trtype = 2;
-    NvmeAddressFamily adrfam = 3;
-    string traddr = 4;
-    int64 trsvcid = 5;
     string subnqn = 6;
     bool hdgst = 7;
     bool ddgst = 8;
@@ -74,6 +70,42 @@ message NVMfRemoteController {
     int64 queue_size = 11;
     string hostnqn = 12;
 }
+
+// Port spec is used for initiator or target port
+message NVMfPortSpec {
+  // initiator port object key
+  common.v1.ObjectKey id = 1;
+  // Transport type (tcp, fc, rdma, etc.)
+  NvmeTransportType transport_type = 2;
+  // Address family (ipv4, ipv6, etc.)
+  NvmeAddressFamily addr_family = 3;
+  // transport service endpoint (e.g. tcp port)
+  string transport_service_id = 4;
+  // transport address (e.g. ipv4/ipv6 address)
+  string transport_address = 5;
+}
+
+message NVMfPathSpec {
+  // path id
+  common.v1.ObjectKey id = 1;
+  common.v1.ObjectKey initiator_port_id = 2;
+  // target port id
+  common.v1.ObjectKey target_port_id = 3;
+  // initiator device id
+  common.v1.ObjectKey initiator_dev_id  = 4;
+  // target subsystem
+  common.v1.ObjectKey tgt_remote_controller_id  = 5;
+  // selection priority, paths are activated in the given priority order
+  uint32 priority = 6;
+  // wait time before retrying connect on failed block dev
+  uint32 connect_retry_interval = 7;
+
+  // TBD: path mode (enable backend queue in the path)
+  bool enable_backend_queue = 9;
+  // TBD: backend queue id
+  uint32 queue_id = 9;
+}
+
 
 message CreateNVMfRemoteControllerRequest {
     string parent = 1 [
